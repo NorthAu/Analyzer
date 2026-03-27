@@ -1,0 +1,5 @@
+int 9abc = 10;
+String s = "hello;
+/* block comment
+float x = 12.;
+@
