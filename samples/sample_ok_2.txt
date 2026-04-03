@@ -1,0 +1,7 @@
+float avg = 88.5;
+char grade = 'A';
+String msg = "good";
+if (avg >= 60.0 && grade != 'F') {
+    // pass
+    avg += 1.5;
+}
