@@ -15,12 +15,15 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -124,11 +127,18 @@ public class LexerGUI extends JFrame {
         editMenu.add(clearItem);
 
         JMenu analysisMenu = new JMenu("词法分析(W)");
-        JMenuItem runItem = new JMenuItem("开始分析");
+        JMenuItem runItem = new JMenuItem("词法分析器(A)");
+        runItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK));
+        JMenuItem nfaItem = new JMenuItem("NFA_DFA_MFA(N)");
+        nfaItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
         JMenuItem clearResultItem = new JMenuItem("清空结果");
+
         runItem.addActionListener(e -> analyze());
+        nfaItem.addActionListener(e -> openNfaDfaMfaDialog());
         clearResultItem.addActionListener(e -> clearResultOnly());
+
         analysisMenu.add(runItem);
+        analysisMenu.add(nfaItem);
         analysisMenu.add(clearResultItem);
 
         JMenu helpMenu = new JMenu("帮助(H)");
@@ -156,7 +166,8 @@ public class LexerGUI extends JFrame {
         toolBar.add(createToolButton("复制", () -> inputArea.copy()));
         toolBar.add(createToolButton("粘贴", () -> inputArea.paste()));
         toolBar.addSeparator();
-        toolBar.add(createToolButton("分析", this::analyze));
+        toolBar.add(createToolButton("词法分析", this::analyze));
+        toolBar.add(createToolButton("NFA_DFA_MFA", this::openNfaDfaMfaDialog));
         toolBar.add(createToolButton("清空结果", this::clearResultOnly));
         toolBar.add(createToolButton("清空全部", this::clearAll));
         toolBar.add(createToolButton("导出Token", this::exportTokenOutput));
@@ -217,6 +228,12 @@ public class LexerGUI extends JFrame {
                 "状态：分析完成。Token=%d，符号=%d，错误=%d",
                 result.getTokens().size(), result.getSymbols().size(), result.getErrors().size()
         ));
+    }
+
+    private void openNfaDfaMfaDialog() {
+        NfaDfaMfaDialog dialog = new NfaDfaMfaDialog(this);
+        dialog.setVisible(true);
+        statusLabel.setText("状态：已打开 NFA_DFA_MFA 功能窗口");
     }
 
     private String trimForColumn(String lexeme) {
@@ -303,7 +320,7 @@ public class LexerGUI extends JFrame {
         JOptionPane.showMessageDialog(
                 this,
                 "编译原理实践：词法分析器设计\n"
-                        + "功能：输入、分析、Token/符号表/错误输出、文件导入导出。",
+                        + "功能：输入、分析、Token/符号表/错误输出、文件导入导出、NFA-DFA-MFA转换。",
                 "关于",
                 JOptionPane.INFORMATION_MESSAGE
         );
